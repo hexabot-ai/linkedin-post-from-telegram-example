@@ -1,0 +1,474 @@
+kind: hexabot.workflow.bundle
+schemaVersion: 1
+exportedAt: 2026-05-13T15:20:32.965Z
+workflow:
+  exportId: 9d3295a3-6465-4076-a1ed-3d16fd3f635f
+  name: LinkedIn Post via Telegram
+  description: Generates polished LinkedIn posts from Telegram-submitted topics through AI-powered idea generation, review, refinement, and formatting.
+  type: conversational
+  schedule: null
+  inputSchema:
+    $schema: http://json-schema.org/draft-07/schema#
+    type: object
+    properties:
+      message_type:
+        title: Message type
+        description: Type of inbound message associated with the triggering event.
+        type: string
+        enum:
+          - text
+          - postback
+          - quickReply
+          - location
+          - attachment
+          - ""
+      payload:
+        title: Payload
+        description: Raw event payload passed to the workflow.
+        anyOf:
+          - oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    const: location
+                  coordinates:
+                    type: object
+                    properties:
+                      lat:
+                        type: number
+                      lon:
+                        type: number
+                    required:
+                      - lat
+                      - lon
+                    additionalProperties: false
+                required:
+                  - type
+                  - coordinates
+                additionalProperties: false
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    const: attachment
+                  attachment:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - image
+                          - video
+                          - audio
+                          - file
+                          - unknown
+                      payload:
+                        anyOf:
+                          - type: object
+                            properties:
+                              id:
+                                anyOf:
+                                  - type: string
+                                  - type: "null"
+                              url:
+                                type: string
+                            required:
+                              - id
+                            additionalProperties: false
+                          - type: object
+                            properties:
+                              id:
+                                anyOf:
+                                  - type: string
+                                  - type: "null"
+                              url:
+                                type: string
+                            required:
+                              - url
+                            additionalProperties: false
+                    required:
+                      - type
+                      - payload
+                    additionalProperties: false
+                required:
+                  - type
+                  - attachment
+                additionalProperties: false
+          - type: string
+      message:
+        oneOf:
+          - type: object
+            properties:
+              type:
+                type: string
+                const: text
+              data:
+                type: object
+                properties:
+                  text:
+                    type: string
+                required:
+                  - text
+                additionalProperties: false
+            required:
+              - type
+              - data
+            additionalProperties: false
+          - type: object
+            properties:
+              type:
+                type: string
+                const: postback
+              data:
+                type: object
+                properties:
+                  text:
+                    type: string
+                  payload:
+                    type: string
+                required:
+                  - text
+                  - payload
+                additionalProperties: false
+            required:
+              - type
+              - data
+            additionalProperties: false
+          - type: object
+            properties:
+              type:
+                type: string
+                const: quickReply
+              data:
+                type: object
+                properties:
+                  text:
+                    type: string
+                  payload:
+                    type: string
+                required:
+                  - text
+                  - payload
+                additionalProperties: false
+            required:
+              - type
+              - data
+            additionalProperties: false
+          - type: object
+            properties:
+              type:
+                type: string
+                const: location
+              data:
+                type: object
+                properties:
+                  coordinates:
+                    type: object
+                    properties:
+                      lat:
+                        type: number
+                      lon:
+                        type: number
+                    required:
+                      - lat
+                      - lon
+                    additionalProperties: false
+                required:
+                  - coordinates
+                additionalProperties: false
+            required:
+              - type
+              - data
+            additionalProperties: false
+          - type: object
+            properties:
+              type:
+                type: string
+                const: attachment
+              data:
+                type: object
+                properties:
+                  serializedText:
+                    type: string
+                  attachment:
+                    anyOf:
+                      - type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - image
+                              - video
+                              - audio
+                              - file
+                              - unknown
+                          payload:
+                            anyOf:
+                              - type: object
+                                properties:
+                                  id:
+                                    anyOf:
+                                      - type: string
+                                      - type: "null"
+                                  url:
+                                    type: string
+                                required:
+                                  - id
+                                additionalProperties: false
+                              - type: object
+                                properties:
+                                  id:
+                                    anyOf:
+                                      - type: string
+                                      - type: "null"
+                                  url:
+                                    type: string
+                                required:
+                                  - url
+                                additionalProperties: false
+                        required:
+                          - type
+                          - payload
+                        additionalProperties: false
+                      - type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - image
+                                - video
+                                - audio
+                                - file
+                                - unknown
+                            payload:
+                              anyOf:
+                                - type: object
+                                  properties:
+                                    id:
+                                      anyOf:
+                                        - type: string
+                                        - type: "null"
+                                    url:
+                                      type: string
+                                  required:
+                                    - id
+                                  additionalProperties: false
+                                - type: object
+                                  properties:
+                                    id:
+                                      anyOf:
+                                        - type: string
+                                        - type: "null"
+                                    url:
+                                      type: string
+                                  required:
+                                    - url
+                                  additionalProperties: false
+                          required:
+                            - type
+                            - payload
+                          additionalProperties: false
+                required:
+                  - serializedText
+                  - attachment
+                additionalProperties: false
+            required:
+              - type
+              - data
+            additionalProperties: false
+        title: Message
+        description: Full message object received from the channel.
+      text:
+        type: string
+        title: Text
+        description: Extracted text content from the inbound message.
+      mid:
+        title: Message ID
+        description: Unique identifier of the inbound message.
+        type: string
+      thread_id:
+        type: string
+        title: Thread ID
+        description: Identifier of the conversation thread to which this event belongs.
+    required:
+      - message
+      - text
+      - thread_id
+    additionalProperties: false
+  layout:
+    x: 64.00556999628668
+    y: -55.3952840698106
+    zoom: 0.24953583364277757
+    direction: horizontal
+version:
+  number: 8
+  checksum: 1a60befd4f455be0468f2afb6b4bd41e12abd93fff463cc1d886093a87a3c536
+  message: null
+  exportedVersionId: 26c6c47c-0518-4c49-8d63-277c53a8023a
+definitionYml: |
+  defaults:
+    settings:
+      timeout_ms: 0
+      retries:
+        enabled: false
+        max_attempts: 3
+        backoff_ms: 25
+        max_delay_ms: 10000
+        jitter: 0
+        multiplier: 1
+  defs:
+    generate_ideas:
+      kind: task
+      description: Generate 3 creative LinkedIn post ideas from the user's topic
+      action: ai_generate_reply
+      inputs:
+        input_mode: prompt
+        prompt: =$input.text
+        messages_limit: 4
+        system: You are a LinkedIn content strategist. Based on the topic provided,
+          generate 3 creative LinkedIn post ideas. For each idea, give a
+          compelling headline and explain the angle. Make them specific,
+          actionable, and tailored for LinkedIn's professional audience. Focus on
+          topics that spark conversation and position the author as a thought
+          leader.
+      bindings:
+        model: model
+    double_check:
+      kind: task
+      description: Review ideas for accuracy, tone, and engagement potential
+      action: ai_generate_reply
+      inputs:
+        input_mode: prompt
+        prompt: =$output.generate_ideas.text
+        system: >-
+          You are a rigorous content reviewer. Review the LinkedIn post ideas for:
+
+          1. Factual accuracy - any questionable or unsupported claims?
+
+          2. Tone - appropriate for LinkedIn's professional environment?
+
+          3. Engagement potential - will readers want to comment and share?
+
+          4. Clarity - is the core message clear and focused?
+
+
+          Start your response with exactly "PASS" on the first line if everything
+          looks good, or "NEEDS_REVISION" if there are issues to fix. Then provide
+          your detailed feedback.
+      bindings:
+        model: model
+    regenerate_ideas:
+      kind: task
+      description: Revise ideas incorporating the reviewer's feedback (conditional)
+      action: ai_generate_reply
+      inputs:
+        input_mode: prompt
+        prompt: '="Original ideas: "&$output.generate_ideas.text&"\nReviewer feedback:
+          "&$output.double_check.text'
+        messages_limit: 4
+        system: Revise the LinkedIn post ideas based on the reviewer's feedback. Address
+          all issues raised while keeping the core message compelling. Produce 3
+          improved ideas that maintain creative quality while being more accurate
+          and impactful.
+      bindings:
+        model: model
+    refine_for_linkedin:
+      kind: task
+      description: Develop the best idea into polished content
+      action: ai_generate_reply
+      inputs:
+        input_mode: prompt
+        prompt: '="Best ideas for LinkedIn post: "&$output.generate_ideas.text&"\n
+          Quality review: "&$output.double_check.text'
+        messages_limit: 4
+        system: >-
+          You are a LinkedIn content expert. Select the best idea and develop it
+          into polished, engaging content. Focus on:
+
+          - A scroll-stopping hook in the first line
+
+          - Personal insight or professional storytelling
+
+          - Clear value proposition for the reader
+
+          - Professional yet conversational tone
+
+          - A natural call to action (question or invitation to discuss)
+      bindings:
+        model: model
+    format_linkedin_post:
+      kind: task
+      description: Format refined content as a ready-to-post LinkedIn update
+      action: ai_generate_reply
+      inputs:
+        input_mode: prompt
+        prompt: =$output.refine_for_linkedin.text
+        system: >-
+          Format the following as a ready-to-post LinkedIn update:
+
+          - Hook line (bold claim, surprising stat, or provocative question)
+
+          - 1 blank line
+
+          - Body: 2-4 short paragraphs (1-2 lines each)
+
+          - 1 blank line
+
+          - Call to action
+
+          - 1 blank line
+
+          - 3-4 relevant hashtags
+
+
+          Keep the total post under 1500 characters. Use line breaks between
+          sections. Do not use markdown formatting. Make it sound authentically
+          human, not like AI.
+      bindings:
+        model: model
+    send_farewell:
+      kind: task
+      description: Farewell message after completion
+      action: send_text_message
+      inputs:
+        text: Your LinkedIn post is ready to copy and share. Come back anytime!
+    model:
+      kind: model
+      settings:
+        provider: gemini
+        model_id: gemma-4-31b-it
+        api_key: 101698b3-77de-4031-a9ae-df144dc6025d
+    linkedin_publisher:
+      kind: task
+      description: Publishes a post to LinkedIn via API v2
+      action: linkedin_publisher
+      inputs:
+        text: =$output.format_linkedin_post.text
+  flow:
+    - do: generate_ideas
+    - do: double_check
+    - conditional:
+        description: If reviewer flagged issues, regenerate improved ideas before refinement
+        when:
+          - condition: =$contains($output.double_check.text, 'NEEDS_REVISION')
+            steps:
+              - do: regenerate_ideas
+          - else: true
+            steps: []
+    - do: refine_for_linkedin
+    - do: format_linkedin_post
+    - do: linkedin_publisher
+  outputs:
+    final_post: =$output.format_linkedin_post.text
+    review_verdict: =$output.double_check.text
+resources:
+  memoryDefinitions: []
+  mcpServers: []
+  credentials: []
+  contentTypes: []
+  labelGroups: []
+  labels: []
+  workflows: []

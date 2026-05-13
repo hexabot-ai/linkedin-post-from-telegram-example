@@ -1,0 +1,16 @@
+services:
+  postgres:
+    ports:
+      - ${DB_PORT:-5432}:5432
+
+  pgadmin:
+    image: dpage/pgadmin4:8.9
+    restart: unless-stopped
+    env_file:
+      - ../.env.docker
+    depends_on:
+      - postgres
+    ports:
+      - ${PGADMIN_PORT:-9000}:80
+    networks:
+      - db-network
