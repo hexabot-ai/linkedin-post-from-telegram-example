@@ -1,4 +1,4 @@
-# Hexabot Template Starter
+# Automate LinkedIn Posts from Telegram with Hexabot
 
 A small launchpad for building Hexabot AI automation apps.
 
